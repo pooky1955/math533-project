@@ -2,7 +2,7 @@
 This folder analyzes movie reviews from IMDb using the Large Movie Review Dataset by Mass et al from Stanford University. 
 
 # Dataset Description
-The ACL IMDb movie review dataset contains 25,000 plain-text movie reviews labeled as `x_y.txt` where `x` represents the sample ID, while `y` represents a numerical rating from 0 to 10. Half of these samples have positive ratings (>= 7), and the other half have negative ratings (<= 4). For the purpose of this experiment, we focus only on the training dataset of the ACL IMDb movie review dataset, which is comprised of 25,000 samples. 
+The ACL IMDb movie review dataset contains 25,000 plain-text movie reviews labeled as `x_y.txt` where `x` represents the sample ID, while `y` represents a numerical rating from 0 to 10. Half of these samples have positive ratings (>= 7), and the other half have negative ratings (<= 4). For the purpose of this experiment, we focus only on a random subset of 5000 samples from the training dataset of the ACL IMDb movie review dataset and later evaluate its performance on a subset of 5000 samples from the test dataset.
 
 The dataset is separated into positive and negative reviews, with negative reviews having a numerical rating from 1-4, and positive reviews having a numerical rating of 7-10. For example, `pos/154_8.txt` represents the 154th sample in the `pos` (pos) category with a numerical rating of `8`, while `neg/7_3.txt` represents the 7th sample in the `neg` (negative) category. 
 
