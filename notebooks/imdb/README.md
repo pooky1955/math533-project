@@ -2,7 +2,7 @@
 This folder analyzes movie reviews from IMDb using the Large Movie Review Dataset by Mass et al from Stanford University. 
 
 # Dataset Description
-The ACL IMDb movie review dataset contains 25,000 plain-text movie reviews labeled as `x_y.txt` where `x` represents the sample ID, while `y` represents a numerical rating from 0 to 10. Half of these samples have positive ratings (>= 7), and the other half have negative ratings (<= 4). For the purpose of this experiment, we focus only on a random subset of 5000 samples from the training dataset of the ACL IMDb movie review dataset and later evaluate its performance on a subset of 5000 samples from the test dataset.
+The ACL IMDb movie review dataset contains 25,000 plain-text movie reviews labeled as `x_y.txt` where `x` represents the sample ID, while `y` represents a numerical rating from 0 to 10. Half of these samples have positive ratings (>= 7), and the other half have negative ratings (<= 4). For the purpose of this experiment, we focus only on a random subset of 10,000 samples from the training dataset of the ACL IMDb movie review dataset and later evaluate its performance on 25,000 samples from the test dataset.
 
 The dataset is separated into positive and negative reviews, with negative reviews having a numerical rating from 1-4, and positive reviews having a numerical rating of 7-10. For example, `pos/154_8.txt` represents the 154th sample in the `pos` (pos) category with a numerical rating of `8`, while `neg/7_3.txt` represents the 7th sample in the `neg` (negative) category. 
 
@@ -21,7 +21,7 @@ An example positive review is shown below (`pos/154_8.txt`):
 
 # Methodology
 ## Data Preprocessing
-We use TF-IDF (Term Frequency - Inverse Document Frequency) to convert text into numerial covariates for regression. TF-IDF assigns each word `w` in a document `d` a score based on the term frequency (number of times w appears in document d / total number of terms in document d) and the inverse document frequency (total number of documents / number of documents containing term t). In the case of this dataset, a document would correspond to a movie review, and a term would correspond to a single word in the movie review. The purpose of combining term frequency and inverse document frequency is to highlight words that appear frequently within a document that are valuable for the regression. Common words such as "the" and "a" have a very low IDF-score, which keeps the TF-IDF score low. Performing TF-IDF on the IMDb dataset yields 44,798 covariates.
+We use TF-IDF (Term Frequency - Inverse Document Frequency) to convert text into numerial covariates for regression. TF-IDF assigns each word `w` in a document `d` a score based on the term frequency (number of times w appears in document d / total number of terms in document d) and the inverse document frequency (total number of documents / number of documents containing term t). In the case of this dataset, a document would correspond to a movie review, and a term would correspond to a single word in the movie review. The purpose of combining term frequency and inverse document frequency is to highlight words that appear frequently within a document that are valuable for the regression. Common words such as "the" and "a" have a very low IDF-score, which keeps the TF-IDF score low. Performing TF-IDF on the IMDb dataset yields 51,563 covariates.
 
 ## Model Evaluation
 We consider 4 different linear models: ordinary least squares, Lasso regression, Ridge regression, and ElasticNet.
@@ -31,31 +31,32 @@ We perform hyperparameter tuning on Lasso, Ridge, and ElasticNet to find the bes
 While RMSE evaluates how the model performs as a regression model, we can also adapt these linear models to predict the sentiment of the movie reviews. A review with a predicted rating above 5 would be labeled positive, and a review with a predicted rating below 5 would be labeled negative. We therefore calculate the accuracy as the number of samples that have their sentiment (positive / negative) predicted correctly.
 
 # Results
-We find that Ridge Regression performs best on the IMDb Movie Review Dataset, with an average RMSE of 2.32, with Lasso regression as a close second with an average RMSE of 2.38. The worst model is the Ordinary Least Squares model with an average RMSE of 3.36. The high RMSE of the Ordinary Least Squares model can be explained by the high dimensionality of the input dataset (~ 45,000 features), highly correlated covariates, and non-informative variables.
+We find that Ridge Regression performs best on the IMDb Movie Review Dataset, with an average RMSE of 2.26, with ElasticNet as a close second with an average RMSE of 2.27. The worst model is the unregularized Linear Regression model with an average RMSE of 2.74. The high RMSE of the Ordinary Least Squares model can be explained by the high dimensionality of the input dataset (~ 50,000 features), highly correlated covariates, and non-informative variables.
 
-Lasso used a total of 4617 features, Ridge used a total of 22022 features, and ElasticNet used a total of 586 features.
+Lasso used a total of 1870 features, Ridge used a total of 25538 features, and ElasticNet used a total of 5379 features.
 
 When viewing this experiment as a classification problem by treating ratings above 5 as positive, we have the following results.
 
-| model | accuracy  |
-|-------|--------|
-| lasso | 86.484 |
-| ridge | 86.492 |
-| enet  | 82.796 |
-| ols   | 70.428 |
+| Model             | Accuracy (%) | RMSE   |
+|-------------------|--------------|--------|
+| Lasso             | 84.640%      | 2.2936 |
+| Ridge             | **85.448%**      | **2.2632** |
+| Elastic Net       | 85.328%      | 2.2701 |
+| Linear Regression | 78.836%      | 2.7407 |
 
-We can see that Lasso and Ridge regression have similar accuracy, with Lasso using significantly less features than Ridge. Thus, in the case of this experiment, the preferred model is Lasso due to achieving near-best performance (86.492%, RMSE of 2.38) using 10 times less features than the original feature set (44,798).
+
+We can see that Lasso and Ridge regression have similar accuracy, with Lasso using significantly less features than Ridge. Thus, in the case of this experiment, the preferred model is Lasso due to achieving near-best performance (84.640%, RMSE of 2.29) using 20 times less features than the original feature set (51,563).
 
 
 
 ![plot](../../results/imdb/acl_imdb_cross_validation_score_models.png)
 
-| model | avg rmse ± std |
-|-------|------------------|
-| ridge | 2.315311 ± 0.109337 |
-| lasso | 2.388011 ± 0.115439 |
-| enet  | 2.767987 ± 0.200707 |
-| ols   | 3.367619 ± 0.071726 |
+| Model             | RMSE (avg ± std)        |
+|-------------------|--------------------------|
+| Elastic Net       | 2.225680 ± 0.047162      |
+| Lasso             | 2.275442 ± 0.053249      |
+| Ridge             | **2.204080 ± 0.048074**      |
+| Linear Regression | 2.533487 ± 0.046612      |
 
 Bibtex citation:
 ```bibtex
